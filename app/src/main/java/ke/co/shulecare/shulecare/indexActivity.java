@@ -7,11 +7,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 public class indexActivity extends AppCompatActivity
 {
 SwipeRefreshLayout swipeRefreshLayout3;
+WebView webView;
     @Override
     protected void onCreate(Bundle savedInstanceState)
           {
@@ -21,6 +23,8 @@ SwipeRefreshLayout swipeRefreshLayout3;
                tx.replace(R.id.fragment_interchange_area, new login_n_homefrag());
                tx.commit();
                 setContentView(R.layout.index);
+
+                webView= findViewById(R.id.login_and_home_webview);
           //check if there is a network connection
                           if(haveNetwork())
                           {   //if network is there, show login frag
@@ -47,13 +51,13 @@ SwipeRefreshLayout swipeRefreshLayout3;
                                               // login frag carries the login webview
                                               FragmentTransaction ft_internet_present = getSupportFragmentManager().beginTransaction();
                                               ft_internet_present.replace(R.id.fragment_interchange_area, new login_n_homefrag());
-                                              ft_internet_present.commit();
+                                              ft_internet_present.addToBackStack(null).commit();
                                           }
                                           else if(!haveNetwork())
                                           {//show no internet frag
                                               FragmentTransaction ft_internet_miss = getSupportFragmentManager().beginTransaction();
                                               ft_internet_miss.replace(R.id.fragment_interchange_area, new no_internetfrag());
-                                              ft_internet_miss.commit();
+                                              ft_internet_miss.addToBackStack(null).commit();
                                           }
                                   Toast.makeText(getApplicationContext(), "Internet Connection Refreshed", Toast.LENGTH_SHORT).show();
                                   swipeRefreshLayout3.setRefreshing(false);
@@ -86,7 +90,11 @@ SwipeRefreshLayout swipeRefreshLayout3;
 
     @Override
     public void onBackPressed() {
-        //show if can go back here
-        super.onBackPressed();
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            super.onBackPressed();
+        }
     }
+
 }
